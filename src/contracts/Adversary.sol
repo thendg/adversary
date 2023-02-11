@@ -3,11 +3,13 @@
 
 pragma solidity ^0.8.9;
 
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+// Author: @miron-bykov
 contract Adversary {
     // holds address and tokenID from the original contract (in which the nft was first minted)
     struct Token {
         uint256 tokenID;
-        address originalContract;
+        IERC721 originalContract;
     }
 
     struct Game {
@@ -33,7 +35,7 @@ contract Adversary {
         address host,
         address challenger,
         uint256[] memory tokenIDs,
-        address[] memory originalContracts
+        IERC721[] memory originalContracts
     ) public onlyAdmin {
         require(
             tokenIDs.length == originalContracts.length,
@@ -45,6 +47,13 @@ contract Adversary {
             temporaryPool[i] = (Token(tokenIDs[i], originalContracts[i]));
         }
         games[nextGameID] = Game(host, challenger, temporaryPool);
+    }
+
+    function payout(uint gameID, address winner) public onlyAdmin {
+        Token[] memory prizes = games[gameID].prizePool;
+        for (uint256 i = 0; i < prizes.length; i++) {
+            prizes[i].originalContract.safeTransferFrom(address(this), winner, prizes[i].tokenID);
+        }
     }
 
     modifier onlyAdmin() {
