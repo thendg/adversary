@@ -6,6 +6,7 @@ import Input from "@/components/Input";
 import Title from "@/components/Title";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
+import { useContractRead } from "wagmi";
 
 export default function Play() {
   const router = useRouter();
@@ -14,7 +15,13 @@ export default function Play() {
   function create() {
     if (inputRef.current) {
       // opponent address is inputRef.current.value
-      inputRef.current.value = "";
+      //inputRef.current.value = "";
+      // const { data, isError, isLoading } = useContractRead({
+      //   address: "0x86Ba0e84e40Bff84A0bEb2Fc042cd22d83Df29Af",
+      //   abi: //Adversary contract abi here,
+      //   functionName: 'play',
+      //   args: ['host', inputRef.current, tokenids, original contract address]
+      // })
     }
   }
 
