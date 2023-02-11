@@ -11,6 +11,7 @@ module.exports = {
   theme: {
     fontFamily: {
       bungee: "var(--bungee)",
+      "ibm-plex-mono": "var(--ibm-plex-mono)",
     },
     extend: {},
   },
