@@ -1,22 +1,35 @@
+"use client";
 
-const socket = io("ws://localhost:3000");
+import { useEffect, useState } from 'react'
+import io from 'socket.io-client'
+let socket: any
 
-socket.on("connect", () => {
-  // either with send()
-  socket.send("Hello!");
+const Home = () => {
+  const [input, setInput] = useState('')
 
-  // or with emit() and custom event names
-  socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));
-});
+  useEffect(() => {socketInitializer();}, [])
 
-// handle the event sent with socket.send()
-socket.on("message", (data:any) => {
-  console.log(data);
-});
+  const socketInitializer = async () => {
+    //await fetch('server');
+    socket = io()
 
-// handle the event sent with socket.emit()
-socket.on("greetings", (elem1:any, elem2:any, elem3:any) => {
-  console.log(elem1, elem2, elem3);
-});
+    socket.on('connect', () => {
+      console.log('connected')
+    })
 
-export {}
+    socket.on('update-input', (msg:any) => {
+      setInput(msg)
+    })
+  }
+
+  const onChangeHandler = () => {
+    setInput("hello")
+    socket.emit('input-change', "hello")
+  }
+
+  return (
+    <button onClick={onChangeHandler}>Clicke here {input}</button>
+  )
+}
+
+export default Home;
