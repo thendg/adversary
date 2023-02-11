@@ -40,3 +40,7 @@ next-env.d.ts
 .env
 
 cache
+
+src/contracts/artifacts/
+!src/contracts/artifacts/src/**/*.json
+src/contracts/artifacts/src/**/*.dbg.json
