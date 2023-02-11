@@ -4,9 +4,11 @@ import Button from "@/components/Button";
 import ConnectedWallet from "@/components/ConnectedWallet";
 import Input from "@/components/Input";
 import Title from "@/components/Title";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export default function Play() {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
   function create() {
@@ -18,8 +20,7 @@ export default function Play() {
 
   function join() {
     if (inputRef.current) {
-      // game id is inputRef.current.value;
-      inputRef.current.value = "";
+      router.push(`/play/${inputRef.current.value}`);
     }
   }
 
