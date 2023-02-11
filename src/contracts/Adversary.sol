@@ -4,10 +4,10 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-// Author: @miron-bykov
 contract Adversary {
     // holds address and tokenID from the original contract (in which the nft was first minted)
     struct Token {
+        bool exists;
         uint256 tokenID;
         IERC721 originalContract;
     }
@@ -15,20 +15,16 @@ contract Adversary {
     struct Game {
         address host;
         address challenger;
-        Token[] prizePool;
     }
 
     address private admin;
     uint256 private nextGameID;
     mapping(uint256 => Game) public games;
+    mapping(uint256 => mapping (uint256 => Token)) public tokens;
 
     constructor() {
         admin = msg.sender;
         nextGameID = 0;
-    }
-
-    function setNextID() private {
-        nextGameID++;
     }
 
     function play(
@@ -42,17 +38,19 @@ contract Adversary {
             "tokenID and address lists are not same length"
         );
 
-        Token[] memory temporaryPool = new Token[](tokenIDs.length);
-        for (uint256 i = 0; i < tokenIDs.length; i++) {
-            temporaryPool[i] = (Token(tokenIDs[i], originalContracts[i]));
-        }
-        games[nextGameID] = Game(host, challenger, temporaryPool);
+        games[nextGameID] = Game(host, challenger);
+        for (uint256 i = 0; i < tokenIDs.length; i++)
+            tokens[nextGameID][i] = (Token(true, tokenIDs[i], originalContracts[i]));
+        nextGameID++;
     }
 
     function payout(uint gameID, address winner) public onlyAdmin {
-        Token[] memory prizes = games[gameID].prizePool;
-        for (uint256 i = 0; i < prizes.length; i++) {
-            prizes[i].originalContract.safeTransferFrom(address(this), winner, prizes[i].tokenID);
+        uint256 id = 0;
+        while (true) {
+            Token memory token = tokens[gameID][id];
+            if (!token.exists) break;
+            token.originalContract.safeTransferFrom(address(this), winner, token.tokenID);
+            id++;
         }
     }
 
