@@ -1,4 +1,5 @@
 "use client";
+import TokenSelector from '@/components/TokenSelector';
 import { ImmutableX, Config } from '@imtbl/core-sdk';
 import {useRef, useState} from 'react';
 
@@ -7,8 +8,9 @@ const client = new ImmutableX(config);
 
 export default function Assets() {
     const [user, setUser] = useState('');
-    const [tokens, setTokens] = useState('');
-    const inputRef = useRef<HTMLInputElement>(null)
+    const [tokens, setTokens] = useState<any[]>([]);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [tokenVisibility, setTokenVisibility] = useState(true);
 
     //gets the data about tokens the user holds
      const getListBalances = async () => {
@@ -19,17 +21,11 @@ export default function Assets() {
         const owner = inputRef.current.value;
         await client.listBalances(
             {owner, }
-        ).then(
-            (response) => {
-                var formatted = '';
-                for(var i = 0; i < response.result.length; i++) {
-                    formatted += 'symbol: ' + response.result[i].symbol + '\n';
-                    formatted += 'balance: ' + response.result[i].balance + '\n';
-                    formatted += 'withdrawable: ' + response.result[i].balance + '\n';
-                    formatted += '\n';
-                }
-                setTokens(formatted);
-            }
+        ).then((response) => {
+            let arr:any[] = [];
+            response.result.forEach((entry) => arr.push(entry));
+            setTokens(arr);
+        }
         ).catch((e) => setTokens(e.message));
         inputRef.current.value = '';
 
@@ -45,11 +41,12 @@ export default function Assets() {
                     ref={inputRef}
                     className="text-center ml-32 mr-32 text-2xl"
                 />
-            <button onClick={() => getListBalances()} className="text-2xl ml-32 mr-32">Submit</button>
-            <div className="flex flex-col justify-center text-2xl text-bold text-center">
+            <button onClick={() => {getListBalances(); setTokenVisibility(true);}} className="text-2xl ml-32 mr-32">Submit</button>
+            <div id="tokens" className="flex flex-col justify-center text-2xl text-bold text-center">
                 <h1>Tokens:</h1>  
-                <p className="whitespace-pre-line">{tokens}</p>
+                {tokenVisibility ? tokens.map((token) => <TokenSelector address={token.token_address} symbol={token.symbol}/>) : null}
             </div>
+            <button className="text-2xl ml-32 mr-32" onClick= {() => setTokenVisibility(false)}>Choose</button>
         </div>
     );
 }
