@@ -26,7 +26,7 @@ export default function Play() {
 
   return (
     <ConnectedWallet>
-      <div className="w-full h-screen gap-4 flex flex-col justify-center items-center bg-gradient-to-r from-gray-400 to-black-900 background-animate">
+      <div className="w-full h-full gap-4 flex flex-col justify-center items-center bg-gradient-to-r from-gray-400 to-black-900 background-animate">
         <Title>Play</Title>
         <Input
           className="w-2/5 bg-white text-black"
