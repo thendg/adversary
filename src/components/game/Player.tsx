@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { Bounds, Position } from "./model";
+import { io } from "socket.io-client";
+
+const socket = io("ws://localhost:4000");
 
 const STEP = 10;
 
@@ -36,6 +39,21 @@ export default function Player({
       document.addEventListener("keydown", onKeyDown, false);
       return () => {
         document.removeEventListener("keydown", onKeyDown, false);
+      };
+    }, []);
+
+    useEffect(() => {
+      socket.on("connect", () => {
+        console.log("connected");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("disconnected");
+      });
+
+      return () => {
+        socket.off("connect");
+        socket.off("disconnect");
       };
     }, []);
   }
