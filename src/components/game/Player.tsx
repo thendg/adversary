@@ -9,17 +9,28 @@ const STEP = 10;
 export default function Player({
   startPos,
   bounds,
+  gameID,
   isPlayer = false,
 }: {
   startPos: Position;
   bounds: Bounds;
+  gameID: string;
   isPlayer?: boolean;
 }) {
   const [pos, setPos] = useState(startPos);
 
+  function getServerData(data?: { [key: string]: any }) {
+    return {
+      id: socket.id,
+      gameID,
+      data,
+    };
+  }
+
   function moveY(value: number) {
     if (value > 0) pos.y = Math.min(bounds.ymax, pos.y + value);
     else pos.y = Math.max(bounds.ymin, pos.y + value);
+    socket.emit("request_position_update", getServerData(pos));
     setPos({ ...pos });
   }
 
@@ -51,9 +62,23 @@ export default function Player({
         console.log("disconnected");
       });
 
+      socket.emit("join", getServerData());
+
       return () => {
         socket.off("connect");
         socket.off("disconnect");
+        socket.off("join");
+      };
+    }, []);
+  } else {
+    useEffect(() => {
+      socket.on("position_update", (data) => {
+        console.log(data);
+        setPos({ ...data });
+      });
+
+      return () => {
+        socket.off("data");
       };
     }, []);
   }

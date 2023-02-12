@@ -29,9 +29,18 @@ export default function Game({
             y: VERTICAL_DISTANCE_FROM_CENTER,
           }}
           bounds={{ ymin: 0, ymax: 600 }}
+          gameID={params.id}
           isPlayer
         />
         <Ball startPos={{ x: 0, y: VERTICAL_DISTANCE_FROM_CENTER }} />
+        <Player
+          startPos={{
+            x: HORIZONTAL_DISTANCE_FROM_CENTER,
+            y: VERTICAL_DISTANCE_FROM_CENTER,
+          }}
+          bounds={{ ymin: 0, ymax: 600 }}
+          gameID={params.id}
+        />
       </div>
       <Score className="right-4 top-10" score={scores[1]} />
     </div>
