@@ -32,13 +32,13 @@ function Assets() {
 
     
     return(
-        <div className="font-bungee flex-col text-5xl text-bold">
+        <div className="font-bungee flex flex-col text-5xl text-bold mt-64">
             <input
                     name="user"
                     id="user"
                     placeholder="Username"
                     ref={inputRef}
-                    className="text-center ml-32 mr-32 text-2xl"
+                    className="text-center ml-32 mr-32 text-2xl bg-black text-white"
                 />
             <button onClick={() => {getListBalances(); setTokenVisibility(true);}} className="text-2xl ml-32 mr-32">Submit</button>
             <div id="tokens" className="flex flex-col justify-center text-2xl text-bold text-center">
